@@ -6,7 +6,6 @@ export default function Home() {
   const [form, setForm] = useState({
     pools: '',
     teamsPerPool: '',
-    totalTeams: '',
     playersPerTeam: '',
     courts: '',
     category: '',
@@ -26,7 +25,6 @@ export default function Home() {
     const {
       pools,
       teamsPerPool,
-      totalTeams,
       playersPerTeam,
       courts,
       category,
@@ -36,33 +34,37 @@ export default function Home() {
 
     const p = parseInt(pools);
     const tpp = parseInt(teamsPerPool);
-    const total = parseInt(totalTeams);
     const ppt = parseInt(playersPerTeam);
     const c = parseInt(courts);
     const intervalMin = parseInt(interval);
 
-    const gamesPerPool = tpp * (tpp - 1) / 2;
+    const totalTeams = p * tpp;
+    const gamesPerPool = (tpp * (tpp - 1)) / 2;
     const totalGames = gamesPerPool * p;
-    const totalPlayers = total * ppt;
+    const totalPlayers = totalTeams * ppt;
     const rounds = Math.ceil(totalGames / c);
 
-    // Generate time slots
+    // Generate time slots with correct number of games per round
     const timeSlots = [];
     let matchTime = new Date(`2025-01-01T${startTime}`);
+    let gamesLeft = totalGames;
+
     for (let r = 0; r < rounds; r++) {
+      const gamesThisRound = Math.min(c, gamesLeft);
       timeSlots.push({
         time: matchTime.toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' }),
         round: r + 1,
-        courts: Array(c).fill(category), 
+        courts: Array(gamesThisRound).fill(category),
       });
-
       matchTime = new Date(matchTime.getTime() + intervalMin * 60000);
+      gamesLeft -= gamesThisRound;
     }
 
     setResults({
       gamesPerPool,
       totalGames,
       totalPlayers,
+      totalTeams,
       rounds,
       timeSlots,
       totalCourts: c,
@@ -77,7 +79,6 @@ export default function Home() {
           {[
             { name: 'pools', label: 'Number of Pools', type: 'number' },
             { name: 'teamsPerPool', label: 'Teams in Each Pool', type: 'number' },
-            { name: 'totalTeams', label: 'Total Number of Teams', type: 'number' },
             { name: 'playersPerTeam', label: 'Players per Team', type: 'number' },
             { name: 'courts', label: 'Number of Courts', type: 'number' },
             { name: 'category', label: 'Category Name', type: 'text' },
@@ -114,6 +115,7 @@ export default function Home() {
             <li>Games per Pool: <strong>{results.gamesPerPool}</strong></li>
             <li>Total Games: <strong>{results.totalGames}</strong></li>
             <li>Total Players: <strong>{results.totalPlayers}</strong></li>
+            <li>Total Teams: <strong>{results.totalTeams}</strong></li>
             <li>Rounds Required: <strong>{results.rounds}</strong></li>
           </ul>
 
@@ -134,8 +136,10 @@ export default function Home() {
                   <tr key={i} className="border-t">
                     <td className="p-2 border">{slot.time}</td>
                     <td className="p-2 border">{slot.round}</td>
-                    {[...slot.courts].reverse().map((court, j) => (
-                      <td key={j} className="p-2 border">{court}</td>
+                    {Array.from({ length: results.totalCourts }, (_, j) => (
+                      <td key={j} className="p-2 border">
+                        {slot.courts[results.totalCourts - 1 - j] || ''}
+                      </td>
                     ))}
                   </tr>
                 ))}
@@ -147,5 +151,3 @@ export default function Home() {
     </main>
   );
 }
-
-
