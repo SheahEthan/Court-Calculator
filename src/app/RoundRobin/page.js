@@ -44,7 +44,6 @@ export default function Home() {
     const totalPlayers = totalTeams * ppt;
     const rounds = Math.ceil(totalGames / c);
 
-    // Generate time slots with correct number of games per round
     const timeSlots = [];
     let matchTime = new Date(`2025-01-01T${startTime}`);
     let gamesLeft = totalGames;
@@ -73,6 +72,11 @@ export default function Home() {
 
   return (
     <main className="min-h-screen flex flex-col items-center bg-gray-50 p-4">
+      <img 
+        src="Linkedup-logo.png" 
+        alt="Logo" 
+        className="w-[202px] h-[96px] absolute top-4 left-4"
+      />
       <div className="bg-white p-7 rounded-2xl shadow-md w-full max-w-2xl">
         <h1 className="text-2xl font-bold mb-4 text-center">Round Robin Calculator</h1>
         <form onSubmit={generateRoundRobin} className="grid grid-cols-1 md:grid-cols-2 gap-4">

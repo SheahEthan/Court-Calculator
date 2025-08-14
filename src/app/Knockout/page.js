@@ -91,6 +91,11 @@ export default function Knockout() {
 
   return (
     <main className="min-h-screen flex flex-col items-center bg-gray-50 p-4">
+      <img 
+        src="Linkedup-logo.png" 
+        alt="Logo" 
+        className="w-[202px] h-[96px] absolute top-4 left-4"
+      />
       <div className="bg-white p-7 rounded-2xl shadow-md w-full max-w-2xl">
         <h1 className="text-2xl font-bold mb-4 text-center">Knockout Round Calculator</h1>
 
